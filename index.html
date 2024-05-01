@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>3D Bar Chart with Larger Text and Centered Bars - A-Frame & D3.js</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <a-scene>
+        <!-- Camera with Look Controls for navigation -->
+        <a-entity camera look-controls wasd-controls position="0 2 10"></a-entity>
+
+        <!-- Lighting for proper visibility -->
+        <a-light type="ambient" color="#fff"></a-light>
+        <a-light type="directional" color="#fff" position="-1 2 3"></a-light>
+
+        <!-- Bar Chart Container -->
+        <a-entity id="bar-chart" position="0 0 0"></a-entity>
+    </a-scene>
+
+    <script>
+        const data = [
+            { period: "January", land: 12.1, soil: 8.7 },
+            { period: "February", land: 10.5, soil: 7.9 },
+            { period: "March", land: 13.2, soil: 9.3 },
+            { period: "April", land: 14.0, soil: 10.1 },
+            { period: "May", land: 15.7, soil: 11.4 },
+            { period: "June", land: 14.5, soil: 10.7 },
+            { period: "July", land: 16.2, soil: 12.0 },
+            { period: "August", land: 17.3, soil: 13.1 },
+            { period: "September", land: 18.5, soil: 14.2 },
+            { period: "October", land: 19.1, soil: 15.3 },
+        ];
+
+        const barWidth = 0.5;  
+        const barSpacing = 0.7; 
+        const heightScale = 0.3; 
+        const textFontSize = 3; 
+
+        const totalBars = data.length;
+        const chartWidth = totalBars * (barWidth + barSpacing);
+        const centerOffset = (chartWidth - barSpacing) / 2;
+
+        const chartContainer = document.getElementById("bar-chart");
+
+        data.forEach((d, index) => {
+            const landHeight = d.land * heightScale;
+            const soilHeight = d.soil * heightScale;
+
+            // Land bar (brown color)
+            const landBar = document.createElement("a-box");
+            landBar.setAttribute("color", "#8B4513"); 
+            landBar.setAttribute("depth", barWidth);  
+            landBar.setAttribute("width", barWidth);  
+            landBar.setAttribute("height", landHeight); 
+            landBar.setAttribute("position", `${index * (barWidth + barSpacing) - centerOffset} ${landHeight / 2} 0`); 
+
+            // Soil bar (green color)
+            const soilBar = document.createElement("a-box");
+            soilBar.setAttribute("color", "#228B22"); 
+            soilBar.setAttribute("depth", barWidth);  
+            soilBar.setAttribute("width", barWidth);  
+            soilBar.setAttribute("height", soilHeight); 
+            soilBar.setAttribute("position", `${index * (barWidth + barSpacing) - centerOffset} ${landHeight + (soilHeight / 2)} 0`); 
+
+            // Value label for land
+            const landLabel = document.createElement("a-entity");
+            landLabel.setAttribute("text", {
+                value: `${d.land.toFixed(1)}`, 
+                align: "center",
+                color: "#000", 
+                baseline: "bottom",
+                fontSize: textFontSize,
+                wrapCount: 10 
+            });
+            landLabel.setAttribute("position", `${index * (barWidth + barSpacing) - centerOffset} ${landHeight + 0.5} 0`); 
+
+            // Value label for soil
+            const soilLabel = document.createElement("a-entity");
+            soilLabel.setAttribute("text", {
+                value: `${d.soil.toFixed(1)}`, 
+                align: "center",
+                color: "#000", 
+                baseline: "bottom",
+                fontSize: textFontSize,
+                wrapCount: 10 
+            });
+            soilLabel.setAttribute("position", `${index * (barWidth + barSpacing) - centerOffset} ${landHeight + soilHeight + 0.5} 0`); 
+
+            // X-axis label
+            const xAxisLabel = document.createElement("a-entity");
+            xAxisLabel.setAttribute("text", {
+                value: d.period, 
+                align: "center",
+                color: "#000", 
+                baseline: "center",
+                fontSize: textFontSize,
+                wrapCount: 10
+            });
+            xAxisLabel.setAttribute("position", `${index * (barWidth + barSpacing) - centerOffset} -0.5 0`); 
+
+            // Append to chart container
+            chartContainer.appendChild(landBar);
+            chartContainer.appendChild(landLabel);
+            chartContainer.appendChild(soilBar);
+            chartContainer.appendChild(soilLabel);
+            chartContainer.appendChild(xAxisLabel);
+        });
+    </script>
+</body>
+</html>
